@@ -135,6 +135,15 @@ void Array::remove_all(value_type el) {
     Array::remove_at(found_at);
     found_at = Array::find(el);
   }
+  /*
+   * After some time, when now I reviewed my code,
+   * I'd solve this problem by returning all indices at once
+   * from the single loop by the method find_all, which isn't implemented,
+   * but anyways, it'd used only O(n), not O(n^2) difficult as it's now.
+   *
+   * I'm not sure at all,
+   * 'cause there's also the trouble with memory reallocation when an item is removed.
+   */
 }
 
 Array::value_type* Array::at_memory(int i) const {
