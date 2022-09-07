@@ -8,23 +8,12 @@ class LinkedList {
     struct Node;
 
     struct Head {
-      protected:
-        // Node* next_;
-
       public:
-        Node* next_;
+        Node* next;
 
-        Head() : next_(nullptr) {}
+        Head() : next(nullptr) {}
 
-        Head(Node &next) : next_(&next) {}
-  
-        void set_next(Node *node) {
-          next_ = node;
-        }
-  
-        Node* next() {
-          return next_;
-        }
+        Head(Node &node) : next(&node) {}
     };
 
     struct Node : public Head {
@@ -56,23 +45,37 @@ class LinkedList {
     LinkedList<T>() : size_(0), head_() {}
 
     LinkedList<T>(const std::initializer_list<T>& list) : size_(0), head_() {
-      // Node *currentNode = head_.next();
-      Node **currentNode = &(head_.next_);
+      Node **currentNode = &(head_.next); // currentNode = address of head.next
 
+      for (const T& item : list) {
+        *currentNode = new Node(item); // assign to the address of head.next new Node()
+        currentNode = &(*currentNode)->next; // assign to currentNode address of the next Node from itself (= last node)
+      }
+/*
+      std::cout << "header: " << &*(head_.next_) << ", first: " << &**currentNode << "\n";
+
+      std::cout << "header: " << &*(head_.next_) << ", second: " << &*currentNode;*/
+
+      // *currentNode = new Node();
+
+/*
       for (const T& item : list) {
         *currentNode = new Node(item);
         // (*currentNode).set_next(currentNode);
         // currentNode = (*currentNode).next();
-        currentNode = *&currentNode;
+        currentNode.next_ = &*currentNode;
 
         ++size_;
-      }
+      }*/
 
+
+/*
       auto node = head_.next_;
       while (node != NULL) {
         std::cout << node->data() << "\n";
         node = node->next_;
-      }
+      }*/
+
 
       // temp = "132";
       // std::cout << (*a).data() << "\n";
@@ -103,7 +106,7 @@ class LinkedList {
     std::size_t find(T value) const;
 
     T front() const {
-      // return (*(head_.next())).data();
+      return (*(head_.next)).data();
     };
 
     T back() const;
@@ -115,5 +118,5 @@ int main() {
   LinkedList<std::string> a{"a", "b"};
   // a.push_front("hey!");
   // std::cout << (*&a.front());
-  // std::cout << a.front();
+  std::cout << a.front();
 }
