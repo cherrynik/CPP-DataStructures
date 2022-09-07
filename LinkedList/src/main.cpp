@@ -6,6 +6,7 @@ class LinkedList {
 
     struct Head;
     struct Node;
+    using Tail = Head;
 
     struct Head {
       public:
@@ -15,6 +16,7 @@ class LinkedList {
 
         Head(Node &node) : next(&node) {}
     };
+
 
     struct Node : public Head {
       private:
@@ -39,84 +41,101 @@ class LinkedList {
     };
 
     Head head_;
+    Tail tail_;
     std::size_t size_;
 
   public:
-    LinkedList<T>() : size_(0), head_() {}
+    LinkedList<T>() : size_(0), head_(), tail_() {}
 
-    LinkedList<T>(const std::initializer_list<T>& list) : size_(0), head_() {
-      Node **currentNode = &(head_.next); // currentNode = address of head.next
+    LinkedList<T>(const std::initializer_list<T>& list) : size_(0), head_(), tail_() {
+      Node **nextNode = &(head_.next); // currentNode = address of head.next
 
       for (const T& item : list) {
-        *currentNode = new Node(item); // assign to the address of head.next new Node()
-        currentNode = &(*currentNode)->next; // assign to currentNode address of the next Node from itself (= last node)
-      }
-/*
-      std::cout << "header: " << &*(head_.next_) << ", first: " << &**currentNode << "\n";
+        *nextNode = new Node(item); // assign to the address of head.next new Node()
+        nextNode = &(*nextNode)->next; // assign to currentNode address of the next Node from itself (= last node)
 
-      std::cout << "header: " << &*(head_.next_) << ", second: " << &*currentNode;*/
-
-      // *currentNode = new Node();
-
-/*
-      for (const T& item : list) {
-        *currentNode = new Node(item);
-        // (*currentNode).set_next(currentNode);
-        // currentNode = (*currentNode).next();
-        currentNode.next_ = &*currentNode;
+        // &(tail_.next) = 
 
         ++size_;
-      }*/
-
-
-/*
-      auto node = head_.next_;
-      while (node != NULL) {
-        std::cout << node->data() << "\n";
-        node = node->next_;
-      }*/
-
-
-      // temp = "132";
-      // std::cout << (*a).data() << "\n";
-
-/*
-      std::cout << "header address: " << &head_ << "\n";
-      std::cout << "pointer to by address: " << &a << "\n";
-      std::cout << "node address: " << &*a << "\n";
-      head_.set_next(a);
-*/
+      }
     }
 
-    void push_front(T value) {
-      /*
-      Node temp = new Node(value);
-      head_.set_next(&temp);
+    void push_back(T value) {
+      Node **nextNode = &(head_.next);
+
+      while (&(*nextNode)->next != NULL) {
+        nextNode = &(*nextNode)->next;
+      }
+
+      *nextNode = new Node(value);
+
       ++size_;
-      */
     }
 
-    void push_back(T value);
-    void pop_front(T value);
-    void pop_back(T value);
-    void insert(size_t index, T value);
-    void remove(T value);
-    void remove_at(size_t index);
-    LinkedList<T> reverse(size_t index);
-    std::size_t find(T value) const;
+    void pop_front(T value) {}
 
-    T front() const {
+    void pop_back(T value) {}
+
+    void insert(size_t index, T value) {}
+
+    void remove(T value) {}
+
+    void remove_at(size_t index) {}
+
+    LinkedList<T> reverse(size_t index) {}
+
+    // Returns index if found, else -1
+    const int find(T value) {
+      Node **nextNode = &(head_.next);
+      int index = 0;
+
+      while (&(*nextNode)->next != NULL) {
+        if ((*nextNode)->data() == value) {
+          return index;
+        }
+
+        nextNode = &(*nextNode)->next;
+        ++index;
+      }
+
+      return -1;
+    }
+
+    const T front() const {
       return (*(head_.next)).data();
-    };
+    }
 
-    T back() const;
-    bool is_empty() const;
-    std::size_t size() const;
+    T back() {
+      Node **nextNode = &(head_.next);
+
+      while (&(*nextNode)->next != NULL) {
+        nextNode = &(*nextNode)->next;
+        std::cout << (*nextNode)->data() << " ";
+      }
+
+      std::cout << (*nextNode)->data() << "\n";
+
+      return (*nextNode)->data();
+    }
+
+    bool is_empty() const {
+      return size_ == 0;
+    }
+
+    std::size_t size() const {
+      return size_;
+    }
 };
 
 int main() {
   LinkedList<std::string> a{"a", "b"};
   // a.push_front("hey!");
   // std::cout << (*&a.front());
-  std::cout << a.front();
+
+  a.push_back("c");
+
+  std::cout << a.find("hey") << "\n";
+  std::cout << "first elem: " << a.front() << "\n";
+  std::cout << "last elem: " << a.back() << "\n";
+  std::cout << "size: " << a.size() << "\n";
 }
