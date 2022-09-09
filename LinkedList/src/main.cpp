@@ -1,78 +1,86 @@
 #include <iostream>
+#include <iterator>
+#include <cassert>
 
 template<class T>
 class LinkedList {
-  private:
-
-    struct Head;
-    struct Node;
-    using Tail = Head;
-
-    struct Head {
+    struct Node {
       public:
-        Node* next;
+        T data_{};
+        Node* next = nullptr;
 
-        Head() : next(nullptr) {}
+        Node() = default;
 
-        Head(Node &node) : next(&node) {}
+        Node(const T& value, Node* next) : data_(value), next(next) {}
     };
 
-
-    struct Node : public Head {
-      private:
-        T data_;
-
-      public:
-        Node() : Head(), data_() {
-          std::cout << "its address: " << this << " " << data_ << "\n";
-        };
-    
-        Node(const T &value) : Head(), data_(value) {
-          std::cout << "its address: " << this << " " << data_ << "\n";
-        };
-  
-        Node(const T &value, const Node &next) : Head(&next), data_(value) {
-          std::cout << "its address: " << this << " " << data_ << "\n";
-        }
-
-        T data() {
-          return data_;
-        }
-    };
-
-    Head head_;
-    Tail tail_;
+    Node head_;
+    // Tail tail_;
     std::size_t size_;
 
-  public:
-    LinkedList<T>() : size_(0), head_(), tail_() {}
-
-    LinkedList<T>(const std::initializer_list<T>& list) : size_(0), head_(), tail_() {
-      Node **nextNode = &(head_.next); // currentNode = address of head.next
-
-      for (const T& item : list) {
-        *nextNode = new Node(item); // assign to the address of head.next new Node()
-        nextNode = &(*nextNode)->next; // assign to currentNode address of the next Node from itself (= last node)
-
-        // &(tail_.next) = 
-
-        ++size_;
+    void cleanup() {
+      while (size_ > 0) {
+        pop_front();
       }
     }
 
-    void push_back(T value) {
-      Node **nextNode = &(head_.next);
+  public:
+    // LinkedList<T>() : size_(0), head_(), tail_() {}
+    LinkedList() = default;
 
-      while (&(*nextNode)->next != NULL) {
-        nextNode = &(*nextNode)->next;
+    LinkedList(std::initializer_list<T> list) : size_(0), head_() {
+      Node** nextNode = &(head_.next); // currentNode = address of head.next
+
+      try {
+        for (T item : list) {
+          *nextNode = new Node(item, *nextNode); // assign to the address of head.next new Node()
+          nextNode = &((*nextNode)->next); // assign to currentNode address of the next Node from itself (= last node)
+  
+          // &(tail_.next) = 
+  
+          ++size_;
+        }
+      } catch (std::bad_alloc) {
+        std::cout << "Bad!\n";
+        delete *nextNode;
+        delete nextNode;
+
+        throw;
       }
+    }
 
-      *nextNode = new Node(value);
+    ~LinkedList() {
+      cleanup();
+    }
+
+    void push_front(const T& value) {
+      head_.next = new Node(value, head_.next);
 
       ++size_;
     }
 
-    void pop_front(T value) {}
+    void push_back(const T& value) {
+      Node** nextNode = &(head_.next); // currentNode = address of head.next
+
+      // std::cout << (*nextNode) << "\n";
+      while ((*nextNode)->next != nullptr) {
+        nextNode = &(*nextNode)->next;
+      }
+
+      // std::cout << "reached";
+      *nextNode = new Node(value, *nextNode);
+
+      ++size_;
+    }
+
+    void pop_front() {
+      Node** next_node = &(head_.next);
+
+      delete head_.next;
+      head_.next = *next_node;
+
+      --size_;
+    }
 
     void pop_back(T value) {}
 
@@ -86,10 +94,10 @@ class LinkedList {
 
     // Returns index if found, else -1
     const int find(T value) {
-      Node **nextNode = &(head_.next);
+      Node *nextNode = head_.next;
       int index = 0;
 
-      while (&(*nextNode)->next != NULL) {
+      while (nextNode->next != NULL) {
         if ((*nextNode)->data() == value) {
           return index;
         }
@@ -128,14 +136,33 @@ class LinkedList {
 };
 
 int main() {
-  LinkedList<std::string> a{"a", "b"};
+  /*
+  int a = 1;
+
+  int* b = &a;
+  int* c = b;
+
+  int** d = &b;
+  int** e = d;
+
+  std::cout << b << " " << c << " " << d << " " << e;*/
+
+  LinkedList<std::string> a{"a"};
+  a.push_back("dfkajs;");
+
+  // assert(a.size() == 2);
   // a.push_front("hey!");
+
+  // std::cout << std::to_string(a.size()) << "\n";
+
   // std::cout << (*&a.front());
 
+  /*
   a.push_back("c");
 
   std::cout << a.find("hey") << "\n";
   std::cout << "first elem: " << a.front() << "\n";
   std::cout << "last elem: " << a.back() << "\n";
   std::cout << "size: " << a.size() << "\n";
+  */
 }
