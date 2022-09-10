@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: untitled
+# Project: LinkedList
 # Configurations: Debug
 # =============================================================================
 
@@ -39,46 +39,46 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = C$:/Users/Nike/CLionProjects/untitled/cmake-build-debug/
+cmake_ninja_workdir = C$:/Users/Nike/CLionProjects/LinkedList/cmake-build-debug/
 # =============================================================================
-# Object build statements for EXECUTABLE target untitled
+# Object build statements for EXECUTABLE target LinkedList
 
 
 #############################################
-# Order-only phony target for untitled
+# Order-only phony target for LinkedList
 
-build cmake_object_order_depends_target_untitled: phony || CMakeFiles/untitled.dir
+build cmake_object_order_depends_target_LinkedList: phony || CMakeFiles/LinkedList.dir
 
-build CMakeFiles/untitled.dir/LinkedList/src/main.cpp.obj: CXX_COMPILER__untitled_Debug C$:/Users/Nike/CLionProjects/untitled/LinkedList/src/main.cpp || cmake_object_order_depends_target_untitled
-  DEP_FILE = CMakeFiles\untitled.dir\LinkedList\src\main.cpp.obj.d
-  FLAGS = -g -std=gnu++14
-  OBJECT_DIR = CMakeFiles\untitled.dir
-  OBJECT_FILE_DIR = CMakeFiles\untitled.dir\LinkedList\src
+build CMakeFiles/LinkedList.dir/LinkedList/src/main.cpp.obj: CXX_COMPILER__LinkedList_Debug C$:/Users/Nike/CLionProjects/LinkedList/LinkedList/src/main.cpp || cmake_object_order_depends_target_LinkedList
+  DEP_FILE = CMakeFiles\LinkedList.dir\LinkedList\src\main.cpp.obj.d
+  FLAGS = -g -std=gnu++11
+  OBJECT_DIR = CMakeFiles\LinkedList.dir
+  OBJECT_FILE_DIR = CMakeFiles\LinkedList.dir\LinkedList\src
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target untitled
+# Link build statements for EXECUTABLE target LinkedList
 
 
 #############################################
-# Link the executable untitled.exe
+# Link the executable LinkedList.exe
 
-build untitled.exe: CXX_EXECUTABLE_LINKER__untitled_Debug CMakeFiles/untitled.dir/LinkedList/src/main.cpp.obj
+build LinkedList.exe: CXX_EXECUTABLE_LINKER__LinkedList_Debug CMakeFiles/LinkedList.dir/LinkedList/src/main.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
-  OBJECT_DIR = CMakeFiles\untitled.dir
+  OBJECT_DIR = CMakeFiles\LinkedList.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_FILE = untitled.exe
-  TARGET_IMPLIB = libuntitled.dll.a
-  TARGET_PDB = untitled.exe.dbg
+  TARGET_FILE = LinkedList.exe
+  TARGET_IMPLIB = libLinkedList.dll.a
+  TARGET_PDB = LinkedList.exe.dbg
 
 
 #############################################
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D C:\Users\Nike\CLionProjects\untitled\cmake-build-debug && D:\Dev\CLion\bin\cmake\win\bin\cmake.exe -E echo "No interactive CMake dialog available.""
+  COMMAND = cmd.exe /C "cd /D C:\Users\Nike\CLionProjects\LinkedList\cmake-build-debug && D:\Dev\CLion\bin\cmake\win\bin\cmake.exe -E echo "No interactive CMake dialog available.""
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -89,7 +89,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cmd.exe /C "cd /D C:\Users\Nike\CLionProjects\untitled\cmake-build-debug && D:\Dev\CLion\bin\cmake\win\bin\cmake.exe --regenerate-during-build -SC:\Users\Nike\CLionProjects\untitled -BC:\Users\Nike\CLionProjects\untitled\cmake-build-debug"
+  COMMAND = cmd.exe /C "cd /D C:\Users\Nike\CLionProjects\LinkedList\cmake-build-debug && D:\Dev\CLion\bin\cmake\win\bin\cmake.exe --regenerate-during-build -SC:\Users\Nike\CLionProjects\LinkedList -BC:\Users\Nike\CLionProjects\LinkedList\cmake-build-debug"
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -99,7 +99,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build untitled: phony untitled.exe
+build LinkedList: phony LinkedList.exe
 
 # =============================================================================
 # Folder targets.
@@ -107,9 +107,9 @@ build untitled: phony untitled.exe
 # =============================================================================
 
 #############################################
-# Folder: C:/Users/Nike/CLionProjects/untitled/cmake-build-debug
+# Folder: C:/Users/Nike/CLionProjects/LinkedList/cmake-build-debug
 
-build all: phony untitled.exe
+build all: phony LinkedList.exe
 
 # =============================================================================
 # Built-in targets

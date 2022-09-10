@@ -1,7 +1,2 @@
 # ninja log v5
-2	440	6845324297487706	CMakeFiles/untitled.dir/main.cpp.obj	c45e01c4513b0f66
-440	537	6845324298427726	untitled.exe	39bfb175ac71c6d1
-1	436	6845333453283065	CMakeFiles/untitled.dir/LinkedList/src/main.cpp.obj	32833d33a4bc1942
-438	534	6845333454213049	untitled.exe	bddd79d66e5ef3b5
-3	421	6845333573622052	CMakeFiles/untitled.dir/LinkedList/src/main.cpp.obj	32833d33a4bc1942
 422	549	6845333574852050	untitled.exe	bddd79d66e5ef3b5

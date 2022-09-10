@@ -123,36 +123,4 @@ int main() {
     LinkedList<std::string> a{};
     a.push_front("Hello!");
     a.push_back("Bye!");
-
-    // std::cout << a << "\n";
-    /*
-    int a = 1;
-    int z = 2;
-    int& bb = a;
-    int* b = &bb;
-    int** c = &b;
-    // int* c = &bb;
-
-    a = 123;
-    b = &a;
-    bb = *b;
-
-    // bb = 123;
-
-    std::cout << bb << " "
-              << b << " "
-              << &b << " "
-              << a << " "
-              << &a << " "
-              << &bb << "\n"
-              << &c << " "
-              << c << " "
-              << *c << " "
-              << **c << "\n";
-    */
-
-    /*
-    a.push_back("dfkajs;");
-    std::cout << a.find("a") << "\n";
-    */
 }
