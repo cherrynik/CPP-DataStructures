@@ -5,86 +5,84 @@
 template<class T>
 class LinkedList {
     struct Node {
-      public:
+    public:
         T data_{};
         Node* next = nullptr;
 
         Node() = default;
 
-        Node(const T& value, Node* next) : data_(value), next(next) {}
+        Node(T value, Node* next) : data_(value), next(next) {}
     };
 
-    Node head_;
+    Node head_{};
     // Tail tail_;
-    std::size_t size_;
+    std::size_t size_ = 0;
 
     void cleanup() {
-      while (size_ > 0) {
-        pop_front();
-      }
+        /*
+        while (size_ > 0) {
+            pop_front();
+        }
+        */
     }
 
-  public:
-    // LinkedList<T>() : size_(0), head_(), tail_() {}
+    Node** find_at(int index) {
+        if (index < -1 || index > static_cast<int>(size_)) {
+            throw std::out_of_range("Index is out of range.");
+        }
+
+        Node** node_addr = &(head_.next);
+        for (int i = 0; i <= index; ++i) {
+            node_addr = &((*node_addr)->next);
+        }
+
+        return node_addr;
+    }
+
+public:
     LinkedList() = default;
 
+    /*
     LinkedList(std::initializer_list<T> list) : size_(0), head_() {
-      Node** nextNode = &(head_.next); // currentNode = address of head.next
+      Node** next_node = &(head_.next);
 
       try {
-        for (T item : list) {
-          *nextNode = new Node(item, *nextNode); // assign to the address of head.next new Node()
-          nextNode = &((*nextNode)->next); // assign to currentNode address of the next Node from itself (= last node)
-  
-          // &(tail_.next) = 
-  
+        for (const T& item : list) {
+          *next_node = new Node(item, *next_node); // can throw bad_alloc
+          next_node = &((*next_node)->next);
           ++size_;
         }
       } catch (std::bad_alloc) {
-        std::cout << "Bad!\n";
-        delete *nextNode;
-        delete nextNode;
+        cleanup();
 
         throw;
       }
     }
+    */
 
     ~LinkedList() {
-      cleanup();
+        cleanup();
     }
 
-    void push_front(const T& value) {
-      head_.next = new Node(value, head_.next);
+    void insert(T data, int index) {
+        Node** elem_before = find_at(index - 1);
 
-      ++size_;
+        *elem_before = new Node(data, *elem_before);
+
+        ++size_;
+    }
+
+    void push_front(T value) {
+        insert(value, 0);
     }
 
     void push_back(const T& value) {
-      Node** nextNode = &(head_.next); // currentNode = address of head.next
-
-      // std::cout << (*nextNode) << "\n";
-      while ((*nextNode)->next != nullptr) {
-        nextNode = &(*nextNode)->next;
-      }
-
-      // std::cout << "reached";
-      *nextNode = new Node(value, *nextNode);
-
-      ++size_;
+        insert(value, size_);
     }
 
-    void pop_front() {
-      Node** next_node = &(head_.next);
+    T pop_front() {}
 
-      delete head_.next;
-      head_.next = *next_node;
-
-      --size_;
-    }
-
-    void pop_back(T value) {}
-
-    void insert(size_t index, T value) {}
+    T pop_back(T value) {}
 
     void remove(T value) {}
 
@@ -93,76 +91,68 @@ class LinkedList {
     LinkedList<T> reverse(size_t index) {}
 
     // Returns index if found, else -1
-    const int find(T value) {
-      Node *nextNode = head_.next;
-      int index = 0;
+    int find(const T& value) const noexcept {
 
-      while (nextNode->next != NULL) {
-        if ((*nextNode)->data() == value) {
-          return index;
-        }
-
-        nextNode = &(*nextNode)->next;
-        ++index;
-      }
-
-      return -1;
     }
 
-    const T front() const {
-      return (*(head_.next)).data();
+    // TODO: as iterators and getters
+    T front() const noexcept {
+
     }
 
-    T back() {
-      Node **nextNode = &(head_.next);
+    T back() const noexcept {
 
-      while (&(*nextNode)->next != NULL) {
-        nextNode = &(*nextNode)->next;
-        std::cout << (*nextNode)->data() << " ";
-      }
-
-      std::cout << (*nextNode)->data() << "\n";
-
-      return (*nextNode)->data();
     }
 
-    bool is_empty() const {
-      return size_ == 0;
+    std::size_t size() const noexcept {
+        return size_;
     }
 
-    std::size_t size() const {
-      return size_;
+    bool is_empty() const noexcept {
+        return size() == 0;
     }
 };
 
+int* test() {
+    int* a = new int();
+    *a = 200;
+    return a;
+}
+
 int main() {
-  /*
-  int a = 1;
+    LinkedList<std::string> a{};
+    a.push_front("Hello!");
+    a.push_back("Bye!");
 
-  int* b = &a;
-  int* c = b;
+    // std::cout << a << "\n";
+    /*
+    int a = 1;
+    int z = 2;
+    int& bb = a;
+    int* b = &bb;
+    int** c = &b;
+    // int* c = &bb;
 
-  int** d = &b;
-  int** e = d;
+    a = 123;
+    b = &a;
+    bb = *b;
 
-  std::cout << b << " " << c << " " << d << " " << e;*/
+    // bb = 123;
 
-  LinkedList<std::string> a{"a"};
-  a.push_back("dfkajs;");
+    std::cout << bb << " "
+              << b << " "
+              << &b << " "
+              << a << " "
+              << &a << " "
+              << &bb << "\n"
+              << &c << " "
+              << c << " "
+              << *c << " "
+              << **c << "\n";
+    */
 
-  // assert(a.size() == 2);
-  // a.push_front("hey!");
-
-  // std::cout << std::to_string(a.size()) << "\n";
-
-  // std::cout << (*&a.front());
-
-  /*
-  a.push_back("c");
-
-  std::cout << a.find("hey") << "\n";
-  std::cout << "first elem: " << a.front() << "\n";
-  std::cout << "last elem: " << a.back() << "\n";
-  std::cout << "size: " << a.size() << "\n";
-  */
+    /*
+    a.push_back("dfkajs;");
+    std::cout << a.find("a") << "\n";
+    */
 }
