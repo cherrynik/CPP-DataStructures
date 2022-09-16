@@ -21,6 +21,10 @@ namespace DataStructures {
 
         Node* at(int index);
 
+        Node* before(int index);
+
+        void cleanup();
+
     public:
         LinkedList() = default;
 
@@ -35,12 +39,11 @@ namespace DataStructures {
         std::size_t size() const;
         std::size_t find(T value) const;
 
-        LinkedList<T> insert(int index, const T& value);
-        LinkedList<T> push_front(const T& value);
-        LinkedList<T> push_back(const T& value);
+        void insert(int index, const T& value);
+        void push_front(const T& value);
+        void push_back(const T& value);
 
-        LinkedList<T> remove(const T& value);
-        LinkedList<T> remove_at(int index);
+        T remove_at(int index);
 
         T pop_front();
         T pop_back();
@@ -48,6 +51,13 @@ namespace DataStructures {
 
         T& operator[](int index);
     };
+}
+
+template<typename T>
+typename DataStructures::LinkedList<T>::Node* DataStructures::LinkedList<T>::before(int index) {
+    return (index - 1) < 0
+        ? &head_
+        : at(index - 1);
 }
 
 template<typename T>
@@ -69,18 +79,34 @@ typename DataStructures::LinkedList<T>::Node* DataStructures::LinkedList<T>::at(
 template<typename T>
 DataStructures::LinkedList<T>::LinkedList(std::initializer_list<T> list) {
     Node* node = &head_;
-    for (const T& item : list) {
-        node->next = new Node(item, node->next);
-        node = node->next;
-        ++size_;
+
+    try {
+        for (const T &item: list) {
+            node->next = new Node(item, node->next); // Can be thrown
+
+            node = node->next;
+            ++size_;
+        }
+    } catch (std::bad_alloc) {
+        cleanup();
+        throw;
     }
 }
 
 template<typename T>
-DataStructures::LinkedList<T>::~LinkedList() {}
+void DataStructures::LinkedList<T>::cleanup() {
+    while (size_ > 0) {
+        pop_front();
+    }
+}
 
 template<typename T>
-DataStructures::LinkedList<T> DataStructures::LinkedList<T>::insert(int index, const T& value) {
+DataStructures::LinkedList<T>::~LinkedList() {
+    cleanup();
+}
+
+template<typename T>
+void DataStructures::LinkedList<T>::insert(int index, const T& value) {
     Node* node_before;
     if (index == 0) {
         node_before = &head_;
@@ -90,18 +116,42 @@ DataStructures::LinkedList<T> DataStructures::LinkedList<T>::insert(int index, c
 
     node_before->next = new Node(value, node_before->next);
     ++size_;
-
-    return (*this);
 }
 
 template<typename T>
-DataStructures::LinkedList<T> DataStructures::LinkedList<T>::push_front(const T& value) {
-    return insert(0, value);
+void DataStructures::LinkedList<T>::push_front(const T& value) {
+    insert(0, value);
 }
 
 template<typename T>
-DataStructures::LinkedList<T> DataStructures::LinkedList<T>::push_back(const T& value) {
-    return insert(size_, value);
+void DataStructures::LinkedList<T>::push_back(const T& value) {
+    insert(size_, value);
+}
+
+template<typename T>
+T DataStructures::LinkedList<T>::remove_at(int index) {
+    Node* node_before = before(index);
+
+    Node* node_to_remove = node_before->next;
+    T removed = node_to_remove->data;
+
+    node_before->next = node_to_remove->next; // Required: doing it before deletion.
+
+    delete node_to_remove;
+
+    --size_;
+
+    return removed;
+}
+
+template<typename T>
+T DataStructures::LinkedList<T>::pop_front() {
+    return remove_at(0);
+}
+
+template<typename T>
+T DataStructures::LinkedList<T>::pop_back() {
+    return remove_at(size_ - 1);
 }
 
 template<typename T>
@@ -197,6 +247,8 @@ void Tests::Test_LinkedList() {
         assert(container.front() == "Hello!");
         container.front() = "Hell";
         assert(container[0] == "Hell");
+
+        assert(container.remove_at(2) == "Bye...");
     }
 
     {
@@ -209,6 +261,13 @@ void Tests::Test_LinkedList() {
         assert(chars.front() == 'a');
         assert(chars[1] == 'n');
         assert(chars.back() == 'z');
+
+        assert(chars.pop_front() == 'a');
+        assert(chars.size() == 2);
+        assert(chars.pop_back() == 'z');
+        assert(chars.size() == 1);
+        assert(chars.pop_back() == 'n');
+        assert(chars.is_empty());
     }
 }
 
