@@ -28,8 +28,8 @@ namespace DataStructures {
 
         ~LinkedList();
 
-        T& front() const;
-        T& back() const;
+        T& front();
+        T& back();
 
         bool is_empty() const;
         std::size_t size() const;
@@ -111,6 +111,16 @@ T& DataStructures::LinkedList<T>::operator[](int index) {
     return node->data;
 }
 
+template<typename T>
+T& DataStructures::LinkedList<T>::front() {
+    return (*this)[0];
+}
+
+template<typename T>
+T& DataStructures::LinkedList<T>::back() {
+    return (*this)[size_ - 1];
+}
+
 namespace Tests {
     void RUN();
     void Test_LinkedList();
@@ -155,6 +165,10 @@ void Tests::Test_LinkedList() {
             hasTrown = true;
         }
         assert(hasTrown);
+
+        assert(container.front() == "Hello!");
+        container.front() = "Hell";
+        assert(container[0] == "Hell");
     }
 }
 
