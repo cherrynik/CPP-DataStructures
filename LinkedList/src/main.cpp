@@ -80,6 +80,31 @@ template<typename T>
 DataStructures::LinkedList<T>::~LinkedList() {}
 
 template<typename T>
+DataStructures::LinkedList<T> DataStructures::LinkedList<T>::insert(int index, const T& value) {
+    Node* node_before;
+    if (index == 0) {
+        node_before = &head_;
+    } else {
+        node_before = at(index - 1);
+    }
+
+    node_before->next = new Node(value, node_before->next);
+    ++size_;
+
+    return (*this);
+}
+
+template<typename T>
+DataStructures::LinkedList<T> DataStructures::LinkedList<T>::push_front(const T& value) {
+    return insert(0, value);
+}
+
+template<typename T>
+DataStructures::LinkedList<T> DataStructures::LinkedList<T>::push_back(const T& value) {
+    return insert(size_, value);
+}
+
+template<typename T>
 bool DataStructures::LinkedList<T>::is_empty() const {
     return size_ == 0;
 }
@@ -172,6 +197,18 @@ void Tests::Test_LinkedList() {
         assert(container.front() == "Hello!");
         container.front() = "Hell";
         assert(container[0] == "Hell");
+    }
+
+    {
+        DataStructures::LinkedList<char> chars;
+        chars.push_front('a');
+        chars.push_back('z');
+
+        chars.insert(1, 'n');
+        assert(chars.size() == 3);
+        assert(chars.front() == 'a');
+        assert(chars[1] == 'n');
+        assert(chars.back() == 'z');
     }
 }
 
