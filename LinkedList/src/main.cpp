@@ -19,7 +19,7 @@ namespace DataStructures {
         Node head_{};
         std::size_t size_ = 0;
 
-
+        Node* at(int index);
 
     public:
         LinkedList() = default;
@@ -51,12 +51,27 @@ namespace DataStructures {
 }
 
 template<typename T>
-DataStructures::LinkedList<T>::LinkedList(std::initializer_list<T> list) {
-    Node* next_node = &head_;
+typename DataStructures::LinkedList<T>::Node* DataStructures::LinkedList<T>::at(int index) {
+    if (index < 0 || index >= size_) {
+        throw std::out_of_range("Index is out of range.");
+    }
 
+    int i = 0;
+    Node* node = &head_;
+    while (i <= index) {
+        node = node->next;
+        ++i;
+    }
+
+    return node;
+}
+
+template<typename T>
+DataStructures::LinkedList<T>::LinkedList(std::initializer_list<T> list) {
+    Node* node = &head_;
     for (const T& item : list) {
-        next_node->next = new Node(item, next_node->next);
-        next_node = next_node->next;
+        node->next = new Node(item, node->next);
+        node = node->next;
         ++size_;
     }
 }
@@ -81,14 +96,14 @@ std::size_t DataStructures::LinkedList<T>::find(T value) const {
         return -1;
     }
 
-    int index = 0;
+    int i = 0;
     while (node->next != nullptr) {
         if (node->next->data == value) {
-            return index;
+            return i;
         }
 
         node = node->next;
-        ++index;
+        ++i;
     }
 
     return -1;
@@ -96,19 +111,7 @@ std::size_t DataStructures::LinkedList<T>::find(T value) const {
 
 template<typename T>
 T& DataStructures::LinkedList<T>::operator[](int index) {
-    if (index < 0 || index >= size_) {
-        throw std::out_of_range("Index is out of range.");
-    }
-
-    Node* node = &head_;
-    int i = 0;
-
-    while (i <= index) {
-        node = node->next;
-        ++i;
-    }
-
-    return node->data;
+    return at(index)->data;
 }
 
 template<typename T>
