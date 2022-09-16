@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cassert>
+// TODO: Appropriate CMakeList
 
 namespace DataStructures {
     template<typename T>
@@ -9,60 +11,155 @@ namespace DataStructures {
             T data{};
 
             Node() = default;
-            Node(T data, Node& next) : data(data), next(next) {}
+
+            Node(T data, Node* next) : data(data), next(next) {
+            }
         };
 
         Node head_{};
         std::size_t size_ = 0;
 
+
+
     public:
         LinkedList() = default;
-        LinkedList(std::initializer_list<T> l);
+
+        LinkedList(std::initializer_list<T> list);
 
         ~LinkedList();
 
-        void push_front(T value);
-        void push_back(T value);
-        void pop_front(T value);
-        void pop_back(T value);
-        void insert(size_t index, T value);
-        void remove(T value);
-        void remove_at(size_t index);
-        LinkedList<T> reverse(size_t index);
-        std::size_t find(T value) const;
-        T front() const;
-        T back() const;
+        T& front() const;
+        T& back() const;
+
         bool is_empty() const;
         std::size_t size() const;
+        std::size_t find(T value) const;
+
+        LinkedList<T> insert(int index, const T& value);
+        LinkedList<T> push_front(const T& value);
+        LinkedList<T> push_back(const T& value);
+
+        LinkedList<T> remove(const T& value);
+        LinkedList<T> remove_at(int index);
+
+        T pop_front();
+        T pop_back();
+        LinkedList<T> reverse();
+
+        T& operator[](int index);
     };
 }
 
 template<typename T>
 DataStructures::LinkedList<T>::LinkedList(std::initializer_list<T> list) {
-    std::cout << "It's happening..." << std::endl;
+    Node* next_node = &head_;
+
+    for (const T& item : list) {
+        next_node->next = new Node(item, next_node->next);
+        next_node = next_node->next;
+        ++size_;
+    }
+}
+
+template<typename T>
+DataStructures::LinkedList<T>::~LinkedList() {}
+
+template<typename T>
+bool DataStructures::LinkedList<T>::is_empty() const {
+    return size_ == 0;
+}
+
+template<typename T>
+std::size_t DataStructures::LinkedList<T>::size() const {
+    return size_;
+}
+
+template<typename T>
+std::size_t DataStructures::LinkedList<T>::find(T value) const {
+    const Node* node = &head_;
+    if (node->next == nullptr) { // || size_ == 0
+        return -1;
+    }
+
+    int index = 0;
+    while (node->next != nullptr) {
+        if (node->next->data == value) {
+            return index;
+        }
+
+        node = node->next;
+        ++index;
+    }
+
+    return -1;
+}
+
+template<typename T>
+T& DataStructures::LinkedList<T>::operator[](int index) {
+    if (index < 0 || index >= size_) {
+        throw std::out_of_range("Index is out of range.");
+    }
+
+    Node* node = &head_;
+    int i = 0;
+
+    while (i <= index) {
+        node = node->next;
+        ++i;
+    }
+
+    return node->data;
 }
 
 namespace Tests {
     void RUN();
-    void Test_LinkedList_Constructing();
+    void Test_LinkedList();
 }
 
-void Tests::Test_LinkedList_Constructing() {
+void Tests::Test_LinkedList() {
     {
-        DataStructures::LinkedList<std::string> empty;
-        DataStructures::LinkedList<std::string>{};
-        DataStructures::LinkedList<std::string>{"Hello!", "Bye!"};
+        DataStructures::LinkedList<int> empty{};
+        assert(empty.is_empty());
+        assert(empty.size() == 0);
+        assert(empty.find(0) == -1);
+
+        DataStructures::LinkedList<int> container{1, 2, 3};
+        assert(container.find(1) == 0);
+        assert(container.find(3) == 2);
+        assert(container.find(0) == -1);
+
+        assert(!container.is_empty());
+        assert(container.size() == 3);
     }
 
     {
-        DataStructures::LinkedList<int> empty;
-        DataStructures::LinkedList<int>{};
-        DataStructures::LinkedList<int>{1, 2};
+        DataStructures::LinkedList<std::string> container{
+            "Hello!",
+            "Just imagine... It might have been a game dialogue.",
+            "Bye..."
+        };
+
+        assert(!container.is_empty());
+        assert(container.size() == 3);
+
+        assert(container.find("Hello!") == 0);
+        assert(container.find("No way!") == -1);
+
+        assert(container[0] == "Hello!");
+        assert(container[container.size() - 1] == "Bye...");
+
+        bool hasTrown = false;
+        try {
+            container[container.size()];
+        } catch (std::out_of_range) {
+            hasTrown = true;
+        }
+        assert(hasTrown);
     }
 }
 
 void Tests::RUN() {
-    Test_LinkedList_Constructing();
+    Test_LinkedList();
 }
 
 int main() {
