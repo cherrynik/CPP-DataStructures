@@ -1,8 +1,6 @@
 #include "LinkedListTests.h"
 
-void TestInit() {
-  /*
-  const LinkedList a{1, 2};
-  ASSERT_EQUAL(a.front(), 1);
-  */
+void Tests::RUN() {
+    std::cout << "Tests gonna start running..." << std::endl;
+    LinkedList<std::string> test1{"1", "2"};
 }
