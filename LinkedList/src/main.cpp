@@ -23,31 +23,31 @@ namespace DataStructures {
 
         Node* before(int index);
 
-        void cleanup();
+        void cleanup() noexcept;
 
     public:
         LinkedList() = default;
 
         LinkedList(std::initializer_list<T> list);
 
-        ~LinkedList();
+        ~LinkedList() noexcept;
 
-        T& front();
-        T& back();
+        T& front() noexcept;
+        T& back() noexcept;
 
-        bool is_empty() const;
-        std::size_t size() const;
-        std::size_t find(T value) const;
+        bool is_empty() const noexcept;
+        std::size_t size() const noexcept;
+        std::size_t find(T value) const noexcept;
 
         void insert(int index, const T& value);
         void push_front(const T& value);
         void push_back(const T& value);
 
-        T remove_at(int index);
+        T remove_at(int index) noexcept;
 
-        T pop_front();
-        T pop_back();
-        void reverse();
+        T pop_front() noexcept;
+        T pop_back() noexcept;
+        void reverse() noexcept;
 
         T& operator[](int index);
     };
@@ -55,7 +55,7 @@ namespace DataStructures {
 
 template<typename T>
 typename DataStructures::LinkedList<T>::Node* DataStructures::LinkedList<T>::before(int index) {
-    return (index - 1) < 0
+    return (index) == 0
         ? &head_
         : at(index - 1);
 }
@@ -93,26 +93,20 @@ DataStructures::LinkedList<T>::LinkedList(std::initializer_list<T> list) {
 }
 
 template<typename T>
-void DataStructures::LinkedList<T>::cleanup() {
+void DataStructures::LinkedList<T>::cleanup() noexcept {
     while (size_ > 0) {
         pop_front();
     }
 }
 
 template<typename T>
-DataStructures::LinkedList<T>::~LinkedList() {
+DataStructures::LinkedList<T>::~LinkedList() noexcept {
     cleanup();
 }
 
 template<typename T>
 void DataStructures::LinkedList<T>::insert(int index, const T& value) {
-    Node* prev;
-    if (index == 0) {
-        prev = &head_;
-    } else {
-        prev = at(index - 1);
-    }
-
+    Node* prev = before(index);
     prev->next = new Node(value, prev->next);
     ++size_;
 }
@@ -128,13 +122,12 @@ void DataStructures::LinkedList<T>::push_back(const T& value) {
 }
 
 template<typename T>
-T DataStructures::LinkedList<T>::remove_at(int index) {
+T DataStructures::LinkedList<T>::remove_at(int index) noexcept {
     Node* prev = before(index);
     Node* curr = prev->next;
     T removed = curr->data;
 
     prev->next = curr->next; // Required: doing it before deletion.
-
     delete curr;
 
     --size_;
@@ -143,27 +136,27 @@ T DataStructures::LinkedList<T>::remove_at(int index) {
 }
 
 template<typename T>
-T DataStructures::LinkedList<T>::pop_front() {
+T DataStructures::LinkedList<T>::pop_front() noexcept {
     return remove_at(0);
 }
 
 template<typename T>
-T DataStructures::LinkedList<T>::pop_back() {
+T DataStructures::LinkedList<T>::pop_back() noexcept {
     return remove_at(size_ - 1);
 }
 
 template<typename T>
-bool DataStructures::LinkedList<T>::is_empty() const {
+bool DataStructures::LinkedList<T>::is_empty() const noexcept {
     return size_ == 0;
 }
 
 template<typename T>
-std::size_t DataStructures::LinkedList<T>::size() const {
+std::size_t DataStructures::LinkedList<T>::size() const noexcept {
     return size_;
 }
 
 template<typename T>
-std::size_t DataStructures::LinkedList<T>::find(T value) const {
+std::size_t DataStructures::LinkedList<T>::find(T value) const noexcept {
     const Node* node = &head_;
     if (node->next == nullptr) { // || size_ == 0
         return -1;
@@ -188,17 +181,17 @@ T& DataStructures::LinkedList<T>::operator[](int index) {
 }
 
 template<typename T>
-T& DataStructures::LinkedList<T>::front() {
+T& DataStructures::LinkedList<T>::front() noexcept {
     return (*this)[0];
 }
 
 template<typename T>
-T& DataStructures::LinkedList<T>::back() {
+T& DataStructures::LinkedList<T>::back() noexcept {
     return (*this)[size_ - 1];
 }
 
 template<typename T>
-void DataStructures::LinkedList<T>::reverse() {
+void DataStructures::LinkedList<T>::reverse() noexcept {
     Node* prev = nullptr;
     Node* curr = head_.next;
 
@@ -249,13 +242,13 @@ void Tests::Test_LinkedList() {
         assert(container[0] == "Hello!");
         assert(container[container.size() - 1] == "Bye...");
 
-        bool hasTrown = false;
+        bool hasThrown = false;
         try {
             container[container.size()];
-        } catch (std::out_of_range) {
-            hasTrown = true;
+        } catch (const std::out_of_range&) {
+            hasThrown = true;
         }
-        assert(hasTrown);
+        assert(hasThrown);
 
         assert(container.front() == "Hello!");
         container.front() = "Hell";
@@ -281,6 +274,19 @@ void Tests::Test_LinkedList() {
         assert(chars.size() == 1);
         assert(chars.pop_back() == 'n');
         assert(chars.is_empty());
+    }
+
+    {
+        DataStructures::LinkedList<int> ints{};
+        ints.reverse();
+    }
+
+    {
+        DataStructures::LinkedList<int> ints{0};
+        assert(ints.front() == 0);
+
+        ints.reverse();
+        assert(ints.back() == 0);
     }
 
     {
