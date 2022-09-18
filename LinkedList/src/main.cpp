@@ -47,7 +47,7 @@ namespace DataStructures {
 
         T pop_front();
         T pop_back();
-        LinkedList<T> reverse();
+        void reverse();
 
         T& operator[](int index);
     };
@@ -79,15 +79,14 @@ typename DataStructures::LinkedList<T>::Node* DataStructures::LinkedList<T>::at(
 template<typename T>
 DataStructures::LinkedList<T>::LinkedList(std::initializer_list<T> list) {
     Node* node = &head_;
-
     try {
-        for (const T &item: list) {
+        for (const T& item : list) {
             node->next = new Node(item, node->next); // Can be thrown
 
             node = node->next;
             ++size_;
         }
-    } catch (std::bad_alloc) {
+    } catch (const std::bad_alloc&) {
         cleanup();
         throw;
     }
@@ -107,14 +106,14 @@ DataStructures::LinkedList<T>::~LinkedList() {
 
 template<typename T>
 void DataStructures::LinkedList<T>::insert(int index, const T& value) {
-    Node* node_before;
+    Node* prev;
     if (index == 0) {
-        node_before = &head_;
+        prev = &head_;
     } else {
-        node_before = at(index - 1);
+        prev = at(index - 1);
     }
 
-    node_before->next = new Node(value, node_before->next);
+    prev->next = new Node(value, prev->next);
     ++size_;
 }
 
@@ -130,14 +129,13 @@ void DataStructures::LinkedList<T>::push_back(const T& value) {
 
 template<typename T>
 T DataStructures::LinkedList<T>::remove_at(int index) {
-    Node* node_before = before(index);
+    Node* prev = before(index);
+    Node* curr = prev->next;
+    T removed = curr->data;
 
-    Node* node_to_remove = node_before->next;
-    T removed = node_to_remove->data;
+    prev->next = curr->next; // Required: doing it before deletion.
 
-    node_before->next = node_to_remove->next; // Required: doing it before deletion.
-
-    delete node_to_remove;
+    delete curr;
 
     --size_;
 
@@ -197,6 +195,21 @@ T& DataStructures::LinkedList<T>::front() {
 template<typename T>
 T& DataStructures::LinkedList<T>::back() {
     return (*this)[size_ - 1];
+}
+
+template<typename T>
+void DataStructures::LinkedList<T>::reverse() {
+    Node* prev = nullptr;
+    Node* curr = head_.next;
+
+    Node copy;
+    while (curr != nullptr) {
+        copy = *curr;
+        curr->next = prev;
+        prev = curr;
+        curr = copy.next;
+    }
+    head_.next = prev;
 }
 
 namespace Tests {
@@ -268,6 +281,16 @@ void Tests::Test_LinkedList() {
         assert(chars.size() == 1);
         assert(chars.pop_back() == 'n');
         assert(chars.is_empty());
+    }
+
+    {
+        DataStructures::LinkedList<int> ints{0, 1, 2, 3, 4, 5};
+        assert(ints.front() == 0);
+        assert(ints.back() == 5);
+
+        ints.reverse();
+        assert(ints.front() == 5);
+        assert(ints.back() == 0);
     }
 }
 
